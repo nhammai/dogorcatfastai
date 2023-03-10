@@ -1,23 +1,63 @@
-<input id="photo" type="file" />
-<div id="results"></div>
-<script>
-  async function loaded(reader) {
-    const response = await fetch(
-      "https://dsmai-fastaidogorcat.hf.space/run/predict",
-      {
-        method: "POST",
-        body: JSON.stringify({ data: [reader.result] }),
-        headers: { "Content-Type": "application/json" }
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Image Classification</title>
+    <style>
+      .file-label {
+        display: block;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
       }
-    )
-    const json = await response.json()
-    const label = json["data"][0]["confidences"][0]["label"]
-    results.innerHTML = `<br/><img src="${reader.result}" width="300"> <p>${label}</p>`
-  }
-  function read() {
-    const reader = new FileReader()
-    reader.addEventListener("load", () => loaded(reader))
-    reader.readAsDataURL(photo.files[0])
-  }
-  photo.addEventListener("input", read)
-</script>
+
+      .file-input {
+        display: block;
+        margin-bottom: 20px;
+      }
+
+      .results-container {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .results-container img {
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+        height: auto;
+      }
+
+      .results-container p {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <label for="photo" class="file-label">Choose an image to upload:</label>
+    <input id="photo" type="file" class="file-input" />
+    <div id="results" class="results-container"></div>
+    <script>
+      async function loaded(reader) {
+        const response = await fetch(
+          "https://dsmai-fastaidogorcat.hf.space/run/predict",
+          {
+            method: "POST",
+            body: JSON.stringify({ data: [reader.result] }),
+            headers: { "Content-Type": "application/json" }
+          }
+        )
+        const json = await response.json()
+        const label = json["data"][0]["confidences"][0]["label"]
+        results.innerHTML = `<br/><img src="${reader.result}" width="300"> <p>${label}</p>`
+      }
+      function read() {
+        const reader = new FileReader()
+        reader.addEventListener("load", () => loaded(reader))
+        reader.readAsDataURL(photo.files[0])
+      }
+      photo.addEventListener("input", read)
+    </script>
+  </body>
+</html>
